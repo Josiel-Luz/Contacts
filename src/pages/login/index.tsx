@@ -1,7 +1,11 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { useContext } from "react";
+import { userContext } from "../../contexts/userContext";
+import { StyledMain } from "./style";
+import { StyledInput } from "../../styles/components/styledInput";
 import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const schema = z.object({
   email: z.string().email("Deve ser um e-mail"),
@@ -11,6 +15,8 @@ const schema = z.object({
 type LoginData = z.infer<typeof schema>;
 
 const LoginPage = () => {
+  const { login } = useContext(userContext);
+
   const {
     register,
     handleSubmit,
@@ -19,17 +25,13 @@ const LoginPage = () => {
     resolver: zodResolver(schema),
   });
 
-  const login = (data: LoginData) => {
-    console.log(data);
-  };
-
   return (
-    <main>
+    <StyledMain>
       <form onSubmit={handleSubmit(login)}>
         <h1>Login</h1>
         <label>
           Email
-          <input
+          <StyledInput
             {...register("email")}
             type="text"
             placeholder="Digite seu email"
@@ -38,7 +40,7 @@ const LoginPage = () => {
         <span>{errors.email?.message}</span>
         <label>
           Senha
-          <input
+          <StyledInput
             {...register("password")}
             type="password"
             placeholder="Digite sua senha"
@@ -51,7 +53,7 @@ const LoginPage = () => {
         </p>
         <button type="submit">Entrar</button>
       </form>
-    </main>
+    </StyledMain>
   );
 };
 

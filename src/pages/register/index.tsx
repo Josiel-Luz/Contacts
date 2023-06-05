@@ -1,18 +1,16 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
+import { useContext } from "react";
+import { userContext } from "../../contexts/userContext";
+import { useForm } from "react-hook-form";
+import { StyledInput } from "../../styles/components/styledInput";
+import { StyledMain } from "./style";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
 const schema = z.object({
   name: z.string(),
   email: z.string().email("Deve ser um email válido"),
-  phone: z
-    .string()
-    .regex(
-      new RegExp(/^([+]?[\s0-9]+)?(\d{3}|[(]?[0-9]+[)])?([-]?[\s]?[0-9])+$/),
-      "Deve ser um número válido"
-    )
-    .min(11, "Deve ser um número válido"),
+  phone: z.number(),
   password: z
     .string()
     .regex(new RegExp(".*[A-Z].*"), "Deve ter ao menos uma letra maiúscula")
@@ -28,6 +26,8 @@ const schema = z.object({
 type registerData = z.infer<typeof schema>;
 
 const RegisterPage = () => {
+  const { createUser } = useContext(userContext);
+
   const {
     register,
     handleSubmit,
@@ -36,17 +36,13 @@ const RegisterPage = () => {
     resolver: zodResolver(schema),
   });
 
-  const registerForm = (data: registerData) => {
-    console.log(data);
-  };
-
   return (
-    <main>
-      <form onSubmit={handleSubmit(registerForm)}>
+    <StyledMain>
+      <form onSubmit={handleSubmit(createUser)}>
         <h1>Registrar</h1>
         <label>
           Nome
-          <input
+          <StyledInput
             {...register("name")}
             type="text"
             placeholder="Digite seu nome"
@@ -55,7 +51,7 @@ const RegisterPage = () => {
         <span>{errors.name?.message}</span>
         <label>
           Email
-          <input
+          <StyledInput
             {...register("email")}
             type="text"
             placeholder="Digite seu email"
@@ -64,16 +60,16 @@ const RegisterPage = () => {
         <span>{errors.email?.message}</span>
         <label>
           Telefone
-          <input
-            {...register("phone")}
-            type="text"
+          <StyledInput
+            {...register("phone", { valueAsNumber: true })}
+            type="number"
             placeholder="Digite seu telefone"
           />
         </label>
         <span>{errors.phone?.message}</span>
         <label>
           Senha
-          <input
+          <StyledInput
             {...register("password")}
             type="password"
             placeholder="Digite uma senha"
@@ -86,7 +82,7 @@ const RegisterPage = () => {
         </p>
         <button>Entrar</button>
       </form>
-    </main>
+    </StyledMain>
   );
 };
 
